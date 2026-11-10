@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>30 Days for Anis</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#301653,#10091d 55%,#080510);color:#f1eaff;font-family:'DM Sans',sans-serif;overflow-x:hidden}
+#stars{position:fixed;inset:0;pointer-events:none}
+.star{position:absolute;width:2px;height:2px;background:#c8a8ff;border-radius:50%;animation:twinkle 3s infinite}
+@keyframes twinkle{50%{opacity:.15;transform:scale(.5)}}
+.container{position:relative;width:min(92%,680px);margin:auto;padding:42px 0 55px}
+header{text-align:center;margin-bottom:25px}
+.eyebrow{font-size:10px;letter-spacing:4px;color:#b99ae9}
+h1{font-size:clamp(32px,7vw,48px);margin:14px 0 8px;text-shadow:0 0 28px #9867db}
+.subtitle{font-size:12px;color:#a99bbd}
+.line{height:1px;width:75px;margin:22px auto;background:linear-gradient(90deg,transparent,#a77ce5,transparent)}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:#a99bbd;margin-bottom:9px}
+.track{height:5px;background:#28183b;border-radius:10px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,#6942a1,#c2a3f4);transition:width .4s}
+.card{margin-top:23px;padding:clamp(20px,5vw,36px);min-height:390px;border:1px solid #422b60;border-radius:22px;background:linear-gradient(145deg,#211334,#110a1d);box-shadow:0 20px 60px #0008,0 0 35px #7545aa20;animation:appear .5s ease}
+@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.day{text-align:center;color:#b99ae9;font-size:10px;letter-spacing:3px}
+h2{text-align:center;font-size:23px;font-weight:500;margin:12px 0 24px}
+.letter{font-size:14px;line-height:2;color:#e1d6f2;white-space:pre-line;min-height:95px}
+.quran{margin-top:28px;padding:22px 15px;border:1px solid #4b326b;border-radius:16px;background:#190f2b;text-align:center}
+.q-label{font-size:10px;letter-spacing:3px;color:#b99ae9;margin-bottom:17px}
+.arabic{font-family:'Amiri',serif;font-size:clamp(25px,6vw,35px);line-height:1.9;direction:rtl;color:#f0e8ff}
+.meaning{font-size:12px;line-height:1.8;color:#c8b8dd;margin-top:14px;font-style:italic}
+.ref{font-size:11px;color:#aa85df;margin-top:13px;letter-spacing:1px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px}
+button{font-family:inherit;cursor:pointer;color:#eee5ff;background:#241638;border:1px solid #533875;padding:12px 17px;border-radius:11px;font-size:12px;transition:.2s}
+button:hover:not(:disabled){background:#392354;box-shadow:0 0 18px #9867db55}
+button:disabled{opacity:.3;cursor:not-allowed}
+.counter{font-size:11px;color:#a99bbd}
+.days{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:27px}
+.day-btn{padding:11px 3px;background:#160e24;border-color:#332247;color:#bba9d2}
+.day-btn.active{background:#382252;border-color:#b28be9;color:white}
+.day-btn.read{border-color:#7957a6;color:#d0b5fa}
+.day-btn.locked{opacity:.3}
+.footer{text-align:center;color:#76668a;font-size:10px;letter-spacing:2px;margin-top:30px}
+@media(max-width:420px){.days{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<main class="container">
+<header>
+<div class="eyebrow">A LITTLE SOMETHING FOR YOU</div>
+<h1>30 Days for Anis</h1>
+<div class="subtitle">thirty letters, thirty reminders, made with care.</div>
+<div class="line"></div>
+</header>
+
+<div class="progress-label"><span>your journey</span><span id="progressText">0 / 30 opened</span></div>
+<div class="track"><div class="fill" id="progressFill"></div></div>
+
+<section class="card">
+<div class="day" id="dayLabel">DAY 01</div>
+<h2 id="title">for my princess</h2>
+<div class="letter" id="letter"></div>
+<div class="quran">
+<div class="q-label">A VERSE TO REMEMBER</div>
+<div class="arabic" id="arabic" lang="ar"></div>
+<div class="meaning" id="meaning"></div>
+<div class="ref" id="reference"></div>
+</div>
+</section>
+
+<div class="nav">
+<button id="prev" onclick="changeDay(-1)">← previous</button>
+<span class="counter" id="counter">01 / 30</span>
+<button id="next" onclick="changeDay(1)">next →</button>
+</div>
+<div class="days" id="days"></div>
+<div class="footer">MADE WITH CARE • ONE DAY AT A TIME</div>
+</main>
+
+<script>
+const START_DATE="2026-11-10";
+
+const letters=[
+{title:"a little beginning",letter:"sayang, this is the first of thirty little letters i made for you. i hope every time you open one, you find a reason to smile. i may not always know the perfect words, but i hope you know that you matter.",ar:"وَإِذَا سَأَلَكَ عِبَادِي عَنِّي فَإِنِّي قَرِيبٌ",meaning:"Dan apabila hamba-hamba-Ku bertanya kepadamu tentang Aku, maka sesungguhnya Aku dekat.",ref:"Al-Baqarah 2:186"},
+{title:"keep going",letter:"please don't give up on yourself, princess. every little effort matters. even when nobody sees how hard you are trying, Allah knows every step you take.",ar:"يَا أَيُّهَا الَّذِينَ آمَنُوا اصْبِرُوا وَصَابِرُوا وَرَابِطُوا",meaning:"Wahai orang-orang yang beriman, bersabarlah, kuatkan kesabaranmu dan tetaplah bersiap siaga.",ref:"Ali 'Imran 3:200"},
+{title:"choose kindness",letter:"i hope you always choose kindness, even when the world gives you reasons not to. a gentle heart is something worth protecting.",ar:"اعْدِلُوا هُوَ أَقْرَبُ لِلتَّقْوَىٰ",meaning:"Berlaku adillah, kerana adil itu lebih dekat kepada takwa.",ref:"Al-Ma'idah 5:8"},
+{title:"stay patient",letter:"some days may test your patience, but please remember that difficult moments do not last forever. keep your faith and keep trying.",ar:"وَاصْبِرُوا إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",meaning:"Dan bersabarlah. Sesungguhnya Allah bersama orang-orang yang sabar.",ref:"Al-Anfal 8:46"},
+{title:"trust Allah",letter:"we cannot control everything that happens, but we can keep trusting Allah. i hope you find comfort in knowing that He is the best Protector.",ar:"قُل لَّن يُصِيبَنَا إِلَّا مَا كَتَبَ اللَّهُ لَنَا",meaning:"Katakanlah: Tidak akan menimpa kami melainkan apa yang telah ditetapkan Allah bagi kami.",ref:"At-Tawbah 9:51"},
+{title:"healing takes time",letter:"i hope your heart always finds a way to heal. take your time, sayang. you don't have to pretend to be okay every single day.",ar:"وَشِفَاءٌ لِّمَا فِي الصُّدُورِ",meaning:"Dan penyembuh bagi penyakit-penyakit yang berada dalam dada.",ref:"Yunus 10:57"},
+{title:"no need to fear",letter:"when you feel afraid of what tomorrow might bring, remember that Allah knows what is ahead. keep walking with faith and hope.",ar:"أَلَا إِنَّ أَوْلِيَاءَ اللَّهِ لَا خَوْفٌ عَلَيْهِمْ وَلَا هُمْ يَحْزَنُونَ",meaning:"Ketahuilah, sesungguhnya para wali Allah tidak ada kebimbangan terhadap mereka dan mereka tidak bersedih hati.",ref:"Yunus 10:62"},
+{title:"your own journey",letter:"don't compare your journey with anyone else's. everyone grows at a different pace. focus on becoming a better version of yourself.",ar:"إِنَّ اللَّهَ لَا يُغَيِّرُ مَا بِقَوْمٍ حَتَّىٰ يُغَيِّرُوا مَا بِأَنفُسِهِمْ",meaning:"Sesungguhnya Allah tidak mengubah keadaan sesuatu kaum sehingga mereka mengubah keadaan diri mereka sendiri.",ref:"Ar-Ra'd 13:11"},
+{title:"do good",letter:"even the smallest good thing can mean so much. i hope you keep being someone who brings kindness into the lives of others.",ar:"إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالْإِحْسَانِ",meaning:"Sesungguhnya Allah menyuruh berlaku adil dan berbuat ihsan.",ref:"An-Nahl 16:90"},
+{title:"a prayer for you",letter:"may Allah give you a heart that feels safe, a mind that feels calm and a future filled with goodness. may you always find your way back to Him.",ar:"رَبَّنَا آتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا",meaning:"Wahai Tuhan kami, kurniakanlah kepada kami rahmat dari sisi-Mu dan sediakanlah petunjuk yang baik dalam urusan kami.",ref:"Al-Kahf 18:10"},
+{title:"what truly matters",letter:"life is full of things that come and go. i hope you keep choosing the things that bring lasting goodness to your heart and your akhirah.",ar:"وَالْبَاقِيَاتُ الصَّالِحَاتُ خَيْرٌ عِندَ رَبِّكَ",meaning:"Amalan-amalan soleh yang kekal itu lebih baik di sisi Tuhanmu.",ref:"Al-Kahf 18:46"},
+{title:"you are not alone",letter:"when life feels scary, remember that Allah hears and sees everything. may that reminder bring a little courage to your heart.",ar:"لَا تَخَافَا إِنَّنِي مَعَكُمَا أَسْمَعُ وَأَرَىٰ",meaning:"Janganlah kamu berdua takut. Sesungguhnya Aku bersama kamu berdua; Aku mendengar dan melihat.",ref:"Taha 20:46"},
+{title:"gentleness",letter:"you don't need to answer every harsh word with another harsh word. sometimes choosing peace is a strength of its own.",ar:"وَعِبَادُ الرَّحْمَٰنِ الَّذِينَ يَمْشُونَ عَلَى الْأَرْضِ هَوْنًا",meaning:"Hamba-hamba Tuhan Yang Maha Pengasih itu ialah mereka yang berjalan di bumi dengan rendah hati.",ref:"Al-Furqan 25:63"},
+{title:"be patient with yourself",letter:"growth takes time, princess. don't be disappointed when you still have things to learn. keep improving, one day at a time.",ar:"وَاصْبِرْ عَلَىٰ مَا أَصَابَكَ",meaning:"Dan bersabarlah terhadap apa yang menimpamu.",ref:"Luqman 31:17"},
+{title:"speak with care",letter:"words can stay in someone's heart for a long time. i hope we always learn to speak honestly, gently and with respect.",ar:"وَقُولُوا قَوْلًا سَدِيدًا",meaning:"Dan katakanlah perkataan yang benar dan tepat.",ref:"Al-Ahzab 33:70"},
+{title:"patience has its reward",letter:"even if your efforts feel unnoticed, never think they are wasted. keep doing good and trust that Allah knows your struggle.",ar:"إِنَّمَا يُوَفَّى الصَّابِرُونَ أَجْرَهُم بِغَيْرِ حِسَابٍ",meaning:"Sesungguhnya orang-orang yang sabar akan disempurnakan pahala mereka tanpa batas.",ref:"Az-Zumar 39:10"},
+{title:"leave it to Allah",letter:"you can make your plans, do your best and still leave the outcome to Allah. may your heart become lighter when you learn to trust Him.",ar:"وَأُفَوِّضُ أَمْرِي إِلَى اللَّهِ",meaning:"Dan aku menyerahkan urusanku kepada Allah.",ref:"Ghafir 40:44"},
+{title:"answer with goodness",letter:"not every situation needs anger. i hope you always find the strength to respond with wisdom and goodness.",ar:"ادْفَعْ بِالَّتِي هِيَ أَحْسَنُ",meaning:"Tolaklah kejahatan dengan cara yang lebih baik.",ref:"Fussilat 41:34"},
+{title:"forgive when you can",letter:"forgiveness does not mean that something never hurt. it means choosing not to let bitterness control your heart. may Allah guide us to what is best.",ar:"وَلَمَن صَبَرَ وَغَفَرَ إِنَّ ذَٰلِكَ لَمِنْ عَزْمِ الْأُمُورِ",meaning:"Sesiapa yang bersabar dan memaafkan, sesungguhnya yang demikian itu termasuk perkara yang mulia.",ref:"Ash-Shura 42:43"},
+{title:"understanding each other",letter:"good relationships need patience, understanding and sincere effort. i hope we always try to make things better instead of letting misunderstandings grow.",ar:"إِنَّمَا الْمُؤْمِنُونَ إِخْوَةٌ",meaning:"Sesungguhnya orang-orang beriman itu bersaudara.",ref:"Al-Hujurat 49:10"},
+{title:"think kindly",letter:"before assuming the worst, i hope we learn to ask, listen and understand. a little kindness can prevent so much hurt.",ar:"اجْتَنِبُوا كَثِيرًا مِّنَ الظَّنِّ",meaning:"Jauhilah kebanyakan daripada prasangka.",ref:"Al-Hujurat 49:12"},
+{title:"Allah knows where you are",letter:"wherever life takes you, remember that nothing is hidden from Allah. may you always feel guided towards what is right.",ar:"وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ",meaning:"Dan Dia bersama kamu di mana sahaja kamu berada.",ref:"Al-Hadid 57:4"},
+{title:"a heart full of faith",letter:"i pray that every difficult moment brings you closer to Allah, not further away. may He guide your heart towards peace and what is good.",ar:"وَمَن يُؤْمِن بِاللَّهِ يَهْدِ قَلْبَهُ",meaning:"Sesiapa yang beriman kepada Allah, nescaya Allah memberi petunjuk kepada hatinya.",ref:"At-Taghabun 64:11"},
+{title:"a way out",letter:"when you feel stuck, don't lose hope. keep doing what is right and trust Allah to open a way you may not have expected.",ar:"وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا",meaning:"Sesiapa yang bertakwa kepada Allah, nescaya Dia akan mengadakan baginya jalan keluar.",ref:"At-Talaq 65:2"},
+{title:"do good sincerely",letter:"the best kindness is the one done sincerely, without expecting something in return. i hope we always keep that kind of goodness in our hearts.",ar:"إِنَّمَا نُطْعِمُكُمْ لِوَجْهِ اللَّهِ",meaning:"Sesungguhnya kami memberi makan kepada kamu kerana Allah semata-mata.",ref:"Al-Insan 76:9"},
+{title:"keep striving",letter:"when one task is finished, keep moving towards another good thing. i hope you never stop learning and building the future you dream of.",ar:"فَإِذَا فَرَغْتَ فَانصَبْ",meaning:"Apabila engkau telah selesai daripada sesuatu urusan, tetaplah berusaha bersungguh-sungguh.",ref:"Ash-Sharh 94:7"},
+{title:"turn to Him",letter:"when you have done everything you can, turn your hopes towards Allah. may your prayers always be a source of strength.",ar:"وَإِلَىٰ رَبِّكَ فَارْغَب",meaning:"Dan hanya kepada Tuhanmu hendaklah engkau berharap.",ref:"Ash-Sharh 94:8"},
+{title:"seek strength",letter:"you don't have to carry every worry alone. make time for prayer and ask Allah for strength. may He make your heart steady.",ar:"وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ",meaning:"Mohonlah pertolongan dengan sabar dan solat.",ref:"Al-Baqarah 2:45"},
+{title:"Allah is enough",letter:"when you feel unsure, remind yourself that Allah is the best One to rely upon. do what you can, and let faith guide the rest.",ar:"حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",meaning:"Cukuplah Allah bagi kami, dan Dia sebaik-baik tempat berserah.",ref:"Ali 'Imran 3:173"},
+{title:"my final letter",letter:"and this is the last letter, sayang. thirty little reminders, but my prayers for your happiness and goodness don't end here. may Allah guide you, protect you and bless every step you take. keep growing, keep being kind and never forget to take care of your heart. alhamdulillah for the chance to know you.",ar:"إِنَّ الصَّلَاةَ تَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ",meaning:"Sesungguhnya solat itu mencegah daripada perbuatan keji dan mungkar.",ref:"Al-'Ankabut 29:45"}
+];
+
+let selectedDay=1;
+let typingTimer=null;
+const $=id=>document.getElementById(id);
+
+function unlockedDay(){
+ const now=new Date();
+ const start=new Date(START_DATE+"T00:00:00");
+ const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ return Math.max(0,Math.min(30,Math.floor((today-start)/86400000)+1));
+}
+function getRead(){
+ try{return JSON.parse(localStorage.getItem("anisReadDays")||"[]")}
+ catch(e){return []}
+}
+function saveRead(day){
+ const read=getRead();
+ if(!read.includes(day)){
+  read.push(day);
+  localStorage.setItem("anisReadDays",JSON.stringify(read));
+ }
+}
+function typeText(text){
+ clearInterval(typingTimer);
+ $("letter").textContent="";
+ let i=0;
+ typingTimer=setInterval(()=>{
+  $("letter").textContent+=text.charAt(i++);
+  if(i>=text.length)clearInterval(typingTimer);
+ },15);
+}
+function render(){
+ const max=unlockedDay();
+ const read=getRead();
+ $("progressText").textContent=read.length+" / 30 opened";
+ $("progressFill").style.width=(read.length/30*100)+"%";
+ $("counter").textContent=String(selectedDay).padStart(2,"0")+" / 30";
+ $("prev").disabled=selectedDay<=1;
+ $("next").disabled=selectedDay>=max;
+
+ const days=$("days");
+ days.innerHTML="";
+ for(let i=1;i<=30;i++){
+  const b=document.createElement("button");
+  b.className="day-btn";
+  b.textContent=i<=max?String(i).padStart(2,"0"):"🔒";
+  if(i===selectedDay)b.classList.add("active");
+  if(read.includes(i))b.classList.add("read");
+  if(i>max)b.classList.add("locked");
+  b.disabled=i>max;
+  b.onclick=()=>{selectedDay=i;render()};
+  days.appendChild(b);
+ }
+
+ if(max===0||selectedDay>max){
+  $("dayLabel").textContent="NOT YET";
+  $("title").textContent="a little patience";
+  $("letter").textContent="Your first letter will open on 10 November 2026. Come back when the day arrives.";
+  $("arabic").textContent="بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+  $("meaning").textContent="Dengan nama Allah Yang Maha Pemurah lagi Maha Mengasihani.";
+  $("reference").textContent="Al-Fatihah 1:1";
+  return;
+ }
+ const item=letters[selectedDay-1];
+ $("dayLabel").textContent="DAY "+String(selectedDay).padStart(2,"0");
+ $("title").textContent=item.title;
+ $("arabic").textContent=item.ar;
+ $("meaning").textContent="“"+item.meaning+"”";
+ $("reference").textContent=item.ref;
+ typeText(item.letter);
+ saveRead(selectedDay);
+ $("progressText").textContent=getRead().length+" / 30 opened";
+ $("progressFill").style.width=(getRead().length/30*100)+"%";
+}
+function changeDay(n){
+ const next=selectedDay+n;
+ if(next>=1&&next<=unlockedDay()){selectedDay=next;render()}
+}
+function makeStars(){
+ for(let i=0;i<65;i++){
+  const s=document.createElement("div");
+  s.className="star";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*4+"s";
+  $("stars").appendChild(s);
+ }
+}
+makeStars();
+render();
+setInterval(()=>{
+ const max=unlockedDay();
+ if(selectedDay>max)selectedDay=Math.max(1,max);
+ render();
+},60000);
+</script>
+</body>
+</html>
